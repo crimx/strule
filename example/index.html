@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light dark">
+    <meta
+      name="description"
+      content="Build Strule rules for URL search parameters, test a URL, and preview the generated schema."
+    >
+    <title>Strule URL Rule Builder</title>
+    <link rel="stylesheet" href="./styles.css">
+  </head>
+  <body>
+    <main class="page-shell">
+      <header class="hero">
+        <div>
+          <h1>URL Search-Param Rules</h1>
+          <p class="hero-description">
+            Configure search parameters, test a link, and inspect the generated AnyOf schema.
+          </p>
+          <p class="project-meta">
+            An interactive example for <code>@strule/core</code>
+            <span aria-hidden="true">·</span>
+            <a href="https://github.com/crimx/strule" target="_blank" rel="noreferrer">github.com/crimx/strule ↗</a>
+          </p>
+        </div>
+      </header>
+
+      <div id="app-shell" aria-busy="true">
+        <section id="app-loading" class="app-loading panel" role="status" aria-live="polite">
+          <span class="loading-spinner" aria-hidden="true"></span>
+          <div>
+            <strong>Loading <code>@strule/core</code></strong>
+            <span>Preparing the rule builder…</span>
+          </div>
+        </section>
+
+        <div id="app-content" hidden>
+          <section class="tester panel" aria-labelledby="tester-heading">
+            <div class="section-heading">
+              <div>
+                <h2 id="tester-heading">Test URL</h2>
+              </div>
+              <output id="test-status" class="status" aria-live="polite"></output>
+            </div>
+            <div class="tester-body">
+              <label class="url-field">
+                <span>URL</span>
+                <input
+                  id="test-url"
+                  type="url"
+                  value="https://example.com/search?q=strule+rules&page=2"
+                  spellcheck="false"
+                  autocomplete="off"
+                >
+              </label>
+              <div id="test-details" class="test-details" aria-live="polite"></div>
+            </div>
+          </section>
+
+          <div class="workspace">
+            <section class="builder panel" aria-labelledby="builder-heading">
+              <div class="section-heading builder-heading">
+                <div>
+                  <h2 id="builder-heading">Search Params</h2>
+                </div>
+                <button id="add-param" class="button button-primary" type="button">Add Search Param</button>
+              </div>
+              <div id="rules" class="rules"></div>
+            </section>
+
+            <aside class="preview panel" aria-labelledby="preview-heading">
+              <div class="section-heading">
+                <div>
+                  <h2 id="preview-heading">Schema Preview</h2>
+                </div>
+                <span id="schema-status" class="schema-status"></span>
+              </div>
+              <pre id="schema-preview" tabindex="0"></pre>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script type="importmap">
+    {
+      "imports": {
+        "@strule/core": "https://cdn.jsdelivr.net/npm/@strule/core@0.0.1/dist/index.mjs"
+      }
+    }
+    </script>
+    <script type="module" src="./bootstrap.js"></script>
+  </body>
+</html>
