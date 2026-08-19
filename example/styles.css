@@ -15,8 +15,6 @@
   --danger: #d73220;
   --danger-soft: #fff1ef;
   --shadow: 0 1px 4px rgb(0 0 0 / 6%), 0 1px 2px rgb(0 0 0 / 8%);
-  --page-glow-start: rgb(229 151 111 / 18%);
-  --page-glow-end: rgb(237 198 143 / 12%);
   --focus-ring: rgb(198 106 69 / 30%);
   --focus-shadow: rgb(198 106 69 / 15%);
   --control-hover: #8d93a2;
@@ -51,8 +49,6 @@
     --danger: #ff8b7b;
     --danger-soft: #3b211f;
     --shadow: 0 1px 5px rgb(0 0 0 / 28%), 0 1px 2px rgb(0 0 0 / 35%);
-    --page-glow-start: rgb(191 97 58 / 12%);
-    --page-glow-end: rgb(170 119 61 / 8%);
     --focus-ring: rgb(215 134 97 / 38%);
     --focus-shadow: rgb(215 134 97 / 22%);
     --control-hover: #77716a;
@@ -74,9 +70,7 @@ body {
   min-width: 320px;
   margin: 0;
   color: var(--ink);
-  background:
-    radial-gradient(circle at 18% -12%, var(--page-glow-start), transparent 34rem),
-    radial-gradient(circle at 82% -18%, var(--page-glow-end), transparent 30rem), var(--page);
+  background: var(--page);
 }
 
 button,
@@ -103,7 +97,6 @@ a:focus-visible {
 .page-shell {
   width: min(1280px, calc(100% - 64px));
   margin: 0 auto;
-  padding: 48px 0 72px;
 }
 
 .hero {
@@ -710,7 +703,6 @@ pre {
 @media (max-width: 720px) {
   .page-shell {
     width: min(100% - 24px, 1280px);
-    padding-top: 28px;
   }
 
   .hero {
