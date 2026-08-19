@@ -1,6 +1,6 @@
 {
-  "name": "strule",
-  "version": "0.1.0",
+  "name": "@strule/core",
+  "version": "0.0.1",
   "description": "A compact JSON specification for user-configurable string rules.",
   "repository": {
     "type": "git",
