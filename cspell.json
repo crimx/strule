@@ -13,6 +13,7 @@
     "mtsx",
     "Parens",
     "preinstall",
+    "strule",
     "treeshake",
     "tsup",
     "typedoc",
