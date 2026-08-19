@@ -6,7 +6,7 @@
 [![Coverage Status](https://crimx.github.io/strule/coverage-badges/strule.svg)](https://crimx.github.io/strule/coverage/)
 [![minified size](https://img.shields.io/bundlephobia/minzip/%40strule%2Fcore)](https://bundlephobia.com/package/@strule/core)
 
-Strule defines portable, user-configurable validation rules for strings. Rules combine common constraints with AND, OR, and negation, and contain no regular expressions, functions, or executable code.
+Strule is a compact JSON format for portable, user-configurable string rules. It supports common string, numeric, and length predicates with AND, OR, and negation. Rules contain no regular expressions, functions, or executable code.
 
 ## Install
 
@@ -14,17 +14,101 @@ Strule defines portable, user-configurable validation rules for strings. Rules c
 npm add @strule/core
 ```
 
-## Specification
+## Define a Strule value
 
-See the [Strule Specification](./SPEC.md) for the complete syntax, semantics, and validity requirements.
+An `AnyOf` contains one or more `AllOf` arrays. The outer array is OR; adjacent operator and operand pairs within each inner array are AND.
 
-Rules use a compact JSON encoding:
-
-```json
-[
+```ts
+const accessRule = [
   ["=", "admin"],
-  ["*=", "foo", "*=", "bar", "!^=", "tmp_", "#>=", 10]
-]
+  ["^=", "org_", "$=", "_prod", "#>=", 10],
+];
 ```
 
-The outer array is OR. Each inner array is an AND group of adjacent operator and operand pairs. This keeps the structure compact and allows an operator to appear more than once in the same group.
+This value matches `"admin"` or a string that starts with `"org_"`, ends with `"_prod"`, and contains at least 10 Unicode code points.
+
+See the [Strule Specification](./SPEC.md) for the complete syntax, numeric model, Unicode requirements, and validity rules.
+
+## Match strings
+
+Use `matches` for a single value:
+
+```ts
+import { matches } from "@strule/core";
+
+matches(accessRule, "admin"); // true
+matches(accessRule, "org_team_prod"); // true
+matches(accessRule, "owner"); // false
+```
+
+Use `compile` when matching many values against the same configuration. Compilation validates and snapshots the configuration once.
+
+```ts
+import { compile } from "@strule/core";
+
+const isAllowed = compile(accessRule);
+
+isAllowed("admin");
+isAllowed("org_team_prod");
+```
+
+`matches` and `compile` throw `InvalidStruleError` when the configuration is invalid. The error exposes the same structured issues returned by `validate`.
+
+```ts
+import { InvalidStruleError, compile } from "@strule/core";
+
+try {
+  compile([[">", "10"]]);
+} catch (error) {
+  if (error instanceof InvalidStruleError) {
+    console.error(error.issues);
+  }
+}
+```
+
+## Validate configuration
+
+Use `validate` for JSON, stored configuration, and editor state that must report errors without throwing.
+
+```ts
+import { validate } from "@strule/core";
+
+const result = validate(JSON.parse(source));
+
+if (result.ok) {
+  console.log(result.value);
+} else {
+  for (const issue of result.issues) {
+    console.error(issue.code, issue.path, issue.message);
+  }
+}
+```
+
+Each issue includes a stable `code`, an array-index `path`, the expected input, the received value, and a default English message.
+
+## Validate an editor field
+
+`validatePredicate` checks one operator and operand without requiring a complete `AnyOf`. This is useful while editing one predicate in a UI.
+
+```ts
+import { validatePredicate } from "@strule/core";
+
+const result = validatePredicate(">", "number");
+
+if (!result.ok) {
+  // [{ code: "invalid_type", path: [1], ... }]
+  showFieldErrors(result.issues);
+}
+```
+
+Use `baseOperators` to populate an operator selector and `getOperandKind` to choose an input control.
+
+```ts
+import { baseOperators, getOperandKind } from "@strule/core";
+
+baseOperators; // ["=", "^=", ..., "#<="]
+getOperandKind("!>="); // "number"
+getOperandKind("#<="); // "length"
+```
+
+Negation does not change the operand kind.
