@@ -8,6 +8,10 @@
 
 Strule is a compact JSON format for portable, user-configurable string rules. It supports common string, numeric, and length predicates with AND, OR, and negation. Rules contain no regular expressions, functions, or executable code.
 
+## Example
+
+[Open the URL search-param rule builder](https://crimx.github.io/strule/example/) to configure rules, test a URL, and inspect the generated schema.
+
 ## Install
 
 ```sh

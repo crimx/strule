@@ -35,6 +35,11 @@ jobs:
       - name: Build Docs 📖
         run: npm run docs
 
+      - name: Copy Example 🧩
+        run: |
+          mkdir -p docs/example
+          cp -R example/. docs/example/
+
       - name: Test 🧪
         run: npm run test:ci
 
