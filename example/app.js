@@ -1,4 +1,5 @@
 import { baseOperators, getOperandKind } from "@strule/core";
+import { loadDraft, saveDraft } from "./draft-storage.js";
 import { analyzeSchemaDraft, getDraftOperandKind, matchSearchParams, toPreviewSchema } from "./schema.js";
 
 const operatorLabels = {
@@ -47,11 +48,37 @@ function parameter(name, required, ...groups) {
   return { id: id("param"), name, required, groups };
 }
 
-const state = {
-  params: [
+function hydrateParams(params) {
+  return params.map((param) =>
+    parameter(
+      param.name,
+      param.required,
+      ...param.groups.map((group) =>
+        allOf(...group.predicates.map((row) => predicate(row.operator, row.value, row.negated))),
+      ),
+    ),
+  );
+}
+
+function defaultParams() {
+  return [
     parameter("q", true, allOf(predicate("*=", "strule"))),
     parameter("page", false, allOf(predicate(">=", "1"), predicate("<=", "10"))),
-  ],
+  ];
+}
+
+function getLocalStorage() {
+  try {
+    return window.localStorage;
+  } catch {
+    return undefined;
+  }
+}
+
+const draftStorage = getLocalStorage();
+const storedParams = loadDraft(draftStorage, baseOperators);
+const state = {
+  params: storedParams ? hydrateParams(storedParams) : defaultParams(),
 };
 
 const rulesElement = document.querySelector("#rules");
@@ -221,6 +248,15 @@ function renderRules() {
   refreshDerivedState();
 }
 
+function commitRules(options = {}) {
+  saveDraft(draftStorage, state.params);
+  if (options.render) {
+    renderRules();
+  } else {
+    refreshDerivedState();
+  }
+}
+
 function findParam(paramId) {
   return state.params.find((param) => param.id === paramId);
 }
@@ -334,7 +370,7 @@ rulesElement.addEventListener("input", (event) => {
     }
   }
 
-  refreshDerivedState();
+  commitRules();
 });
 
 rulesElement.addEventListener("change", (event) => {
@@ -347,7 +383,7 @@ rulesElement.addEventListener("change", (event) => {
 
   if (target.dataset.field === "required") {
     param.required = target.checked;
-    refreshDerivedState();
+    commitRules();
     return;
   }
 
@@ -369,7 +405,7 @@ rulesElement.addEventListener("change", (event) => {
     }
   }
 
-  renderRules();
+  commitRules({ render: true });
 });
 
 rulesElement.addEventListener("click", (event) => {
@@ -386,7 +422,7 @@ rulesElement.addEventListener("click", (event) => {
 
   if (button.dataset.action === "delete-param") {
     state.params = state.params.filter((candidate) => candidate !== param);
-    renderRules();
+    commitRules({ render: true });
     return;
   }
 
@@ -411,12 +447,12 @@ rulesElement.addEventListener("click", (event) => {
     }
   }
 
-  renderRules();
+  commitRules({ render: true });
 });
 
 addParamElement.addEventListener("click", () => {
   state.params.push(parameter("", false, allOf(predicate("=", ""))));
-  renderRules();
+  commitRules({ render: true });
 });
 
 testUrlElement.addEventListener("input", refreshDerivedState);
