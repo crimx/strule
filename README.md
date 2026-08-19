@@ -2,9 +2,9 @@
 
 [![Docs](https://img.shields.io/badge/Docs-read-%23fdf9f5)](https://crimx.github.io/strule)
 [![Build Status](https://github.com/crimx/strule/actions/workflows/build.yml/badge.svg)](https://github.com/crimx/strule/actions/workflows/build.yml)
-[![npm version](https://img.shields.io/npm/v/%40strule%2Fcore)](https://www.npmjs.com/package/@strule/core)
+[![npm version](https://img.shields.io/npm/v/@strule/core)](https://www.npmjs.com/package/@strule/core)
 [![Coverage Status](https://crimx.github.io/strule/coverage-badges/strule.svg)](https://crimx.github.io/strule/coverage/)
-[![minified size](https://img.shields.io/bundlephobia/minzip/%40strule%2Fcore)](https://bundlephobia.com/package/@strule/core)
+[![minified size](https://deno.bundlejs.com/badge?q=@strule/core&treeshake=[*])](https://deno.bundlejs.com/?q=@strule/core&treeshake=[*])
 
 Strule is a compact JSON format for portable, user-configurable string rules. It supports common string, numeric, and length predicates with AND, OR, and negation. Rules contain no regular expressions, functions, or executable code.
 
