@@ -1,0 +1,35 @@
+on: ["pull_request"]
+
+name: Build and Test PR
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js 🟢
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Install dependencies 📦
+        run: npm ci
+        env:
+          npm_config_audit: "false"
+          npm_config_fund: "false"
+          npm_config_loglevel: "error"
+
+      - name: Lint 🧹
+        run: |
+          npm run lint:ci
+          npm run ts-check
+
+      - name: Build 🔧
+        run: npm run build
+
+      - name: Test 🧪
+        run: npm run test:ci
